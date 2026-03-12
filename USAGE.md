@@ -1,26 +1,26 @@
 # PM Explorer Usage Guide
 
-本文档说明如何在本地运行、安装和使用 `PM Explorer`。
+本文档说明如何安装、运行、配置和使用 `PM Explorer`。
 
 ## 1. 插件作用
 
-`PM Explorer` 是一个 VS Code 插件，用来在侧边栏里按项目管理视角浏览文档，而不是只按物理目录查看文件。
+`PM Explorer` 是一个 VS Code 插件，用来在侧边栏里按项目文档视角浏览和管理文件，而不是只按物理目录查看资源。
 
 当前版本支持：
 
 - 按项目根目录展示文档树
-- 按分类目录展示文件
+- 按分类目录组织文档
 - 聚合最近更新文件
-- 根据文件类型选择打开方式
-- 使用 workspace 级配置控制行为
+- 配置文件打开方式
+- 配置文件排序方式
+- 新建文件时使用默认命名模板
+- 在树节点右键执行常见文件操作
 
 ## 2. 开发态运行
 
-如果你正在开发这个插件，推荐先用开发态运行。
+如果你在开发这个插件，推荐先用开发态运行。
 
 ### 安装依赖
-
-在项目根目录执行：
 
 ```bash
 npm install
@@ -37,44 +37,57 @@ npm run compile
 1. 用 VS Code 打开当前项目。
 2. 按 `F5`。
 3. VS Code 会打开一个新的 `Extension Development Host` 窗口。
-4. 在这个新窗口左侧 Activity Bar 中找到 `PM Explorer`。
+4. 在新窗口左侧 Activity Bar 中找到 `PM Explorer`。
 
-如果视图正常显示，说明插件已经被成功加载。
+如果视图正常显示，说明插件已经加载成功。
 
-## 3. 本地安装到正式环境
+## 3. 打包和安装
 
-如果你想在自己的 VS Code 里长期使用，而不是每次都通过 `F5` 调试，可以安装 `.vsix` 包。
-
-### 生成安装包
-
-项目根目录执行：
+### 手动打包
 
 ```bash
 npx @vscode/vsce package
 ```
 
-执行完成后，根目录会生成类似下面的文件：
+执行后会在项目根目录生成 `.vsix` 文件，例如：
 
 ```text
-pm-explorer-0.0.1.vsix
+pm-explorer-0.0.10.vsix
 ```
 
-### 安装 `.vsix`
+### 手动安装
 
-在 VS Code 中：
+```bash
+code --install-extension pm-explorer-0.0.10.vsix --force
+```
 
-1. 打开 Extensions 面板
-2. 点击右上角 `...`
-3. 选择 `Install from VSIX...`
-4. 选择生成的 `.vsix` 文件
+### 自动升版本并安装
 
-安装完成后重新加载 VS Code。
+项目里已经提供了脚本：
+
+```bash
+npm run release:patch
+npm run release:minor
+npm run release:major
+```
+
+这些脚本会自动完成：
+
+1. 升级版本号
+2. 打包 `.vsix`
+3. 安装到本机 VS Code
+
+如果你只想安装当前版本对应的 `.vsix`，可以执行：
+
+```bash
+npm run install:vsix
+```
 
 ## 4. 基本配置
 
-插件通过当前 workspace 的设置控制行为。
+插件通过当前 workspace 的 `.vscode/settings.json` 控制行为。
 
-你可以在工作区的 `.vscode/settings.json` 中写入：
+示例：
 
 ```json
 {
@@ -88,15 +101,15 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-### 配置项说明
+## 5. 配置项说明
 
-#### `pmExplorer.rootPaths`
+### `pmExplorer.rootPaths`
 
 要扫描的根目录列表。
 
 - 类型：`string[]`
 - 默认值：`[]`
-- 说明：如果为空，插件会回退到当前 workspace 文件夹
+- 说明：如果为空，插件会回退到当前 workspace 根目录
 
 示例：
 
@@ -106,52 +119,30 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-#### `pmExplorer.categories`
+### `pmExplorer.categories`
 
 分类名称及显示顺序。
 
 - 类型：`string[]`
 - 默认值：`["Overview", "Plans", "Documents", "Meetings"]`
 
-示例：
+它的作用是控制分类节点排序，不是筛选规则。配置里没出现的目录不会消失，只会排在后面。
 
-```json
-{
-  "pmExplorer.categories": ["Overview", "PRD", "Meetings", "Reports"]
-}
-```
+### `pmExplorer.recentUpdatesLimit`
 
-#### `pmExplorer.recentUpdatesLimit`
-
-最近更新文件的显示数量。
+最近更新文件的展示数量。
 
 - 类型：`number`
 - 默认值：`10`
 
-示例：
+### `pmExplorer.excludePatterns`
 
-```json
-{
-  "pmExplorer.recentUpdatesLimit": 20
-}
-```
-
-#### `pmExplorer.excludePatterns`
-
-扫描时需要忽略的目录名。
+扫描时忽略的目录名。
 
 - 类型：`string[]`
 - 默认值：`[".git", "node_modules"]`
 
-示例：
-
-```json
-{
-  "pmExplorer.excludePatterns": [".git", "node_modules", "dist", "tmp"]
-}
-```
-
-#### `pmExplorer.externalOpenExtensions`
+### `pmExplorer.externalOpenExtensions`
 
 哪些文件类型需要调用系统默认程序打开。
 
@@ -168,7 +159,7 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-#### `pmExplorer.fileSort`
+### `pmExplorer.fileSort`
 
 文件节点和 `Recent Updates` 的排序方式。
 
@@ -177,10 +168,10 @@ pm-explorer-0.0.1.vsix
 
 可选值：
 
-- `modifiedTimeDesc`：按修改时间倒序
-- `modifiedTimeAsc`：按修改时间正序
-- `nameAsc`：按文件名升序
-- `nameDesc`：按文件名降序
+- `modifiedTimeDesc`
+- `modifiedTimeAsc`
+- `nameAsc`
+- `nameDesc`
 
 示例：
 
@@ -190,14 +181,14 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-#### `pmExplorer.newFileNameTemplate`
+### `pmExplorer.newFileNameTemplate`
 
 新建文件时输入框里的默认文件名模板。
 
 - 类型：`string`
 - 默认值：`"note_YYYYMMDD.md"`
 
-支持的占位符：
+支持这些占位符：
 
 - `YYYY`
 - `MM`
@@ -215,15 +206,15 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-如果当前日期是 2026 年 3 月 12 日，那么默认值会展开成：
+如果当前日期是 2026-03-12，默认值会展开成：
 
 ```text
 meeting_20260312.md
 ```
 
-## 5. 推荐目录示例
+## 6. 推荐目录结构
 
-建议你的文档目录尽量接近下面这种结构：
+推荐文档目录尽量接近下面这种形式：
 
 ```text
 docs/
@@ -238,75 +229,95 @@ docs/
     └── weekly-notes.md
 ```
 
-在这个结构下，插件会更容易生成稳定清晰的树。
+这种结构最适合当前版本的分类扫描逻辑。
 
-## 6. 当前打开行为
+## 7. 打开和排序规则
 
-当前版本按文件扩展名决定打开方式：
+### 打开规则
 
-- `pmExplorer.externalOpenExtensions` 中声明的类型：调用系统外部程序打开
+- `pmExplorer.externalOpenExtensions` 中声明的类型：调用系统默认程序打开
 - 其他文件：默认在 VS Code 中打开
 
-文件排序则由 `pmExplorer.fileSort` 控制。
+### 排序规则
 
-这意味着：
+当前版本默认行为：
 
-- 常规文本和可预览文件默认交给 VS Code
-- Office 文件适合交给系统默认应用处理
+- 项目：按名称排序
+- 分类：优先按 `pmExplorer.categories` 指定顺序排序
+- 文件：按 `pmExplorer.fileSort` 排序
 
-## 7. 使用步骤
+注意：
+
+`Recent Updates` 当前也使用 `pmExplorer.fileSort`。如果你把它改成 `nameAsc`，最近更新视图也会按名字排，而不是按时间排。
+
+## 8. 日常使用流程
 
 一个最小可用流程如下：
 
 1. 在 workspace 中准备文档目录，例如 `docs/`。
 2. 在 `.vscode/settings.json` 中设置 `pmExplorer.rootPaths`。
-3. 打开 VS Code 左侧的 `PM Explorer`。
+3. 打开左侧 `PM Explorer` 视图。
 4. 展开项目节点和分类节点。
 5. 点击文件节点打开文件。
-6. 如有目录或配置变化，执行 `PM Explorer: Refresh` 刷新视图。
+6. 需要更新时执行 `PM Explorer: Refresh`。
 
-### 右键快捷菜单
+## 9. 右键菜单
 
-在文件节点上点击右键，可以使用这些快捷功能：
+在 `PM Explorer` 视图中，对文件或目录点击右键，可以看到快捷菜单。
 
-- `Copy Path`：复制文件完整路径
-- `Rename`：直接重命名文件
-- `Reveal in Finder`：在系统文件管理器中显示文件
+文件和目录都支持：
 
-其中 `Reveal in Finder` 在 macOS 上会显示为 Finder 行为，在其他系统上会调用对应平台的文件管理器。
+- `Copy Path`
+- `Copy Name`
+- `Copy Relative Path`
+- `Copy Markdown Link`
+- `Rename`
+- `Duplicate`
+- `Delete`
+- `Reveal in Finder`
+- `Open in Terminal`
 
-## 8. 常见问题
+目录额外支持：
+
+- `New File`
+- `New Folder`
+
+行为说明：
+
+- `Delete` 会弹二次确认
+- `Duplicate` 会自动生成不冲突的新名称，例如 `report copy.md`
+- `Open in Terminal` 会在当前目录打开 VS Code 终端
+- `Reveal in Finder` 在 macOS 上对应 Finder，在其他系统上会调用对应文件管理器
+
+## 10. 常见问题
 
 ### 视图没有显示
 
-排查顺序：
+检查：
 
-1. 确认插件已安装或已通过 `F5` 启动
-2. 确认左侧 Activity Bar 中存在 `PM Explorer`
-3. 确认当前窗口打开的是一个 workspace
+1. 插件是否已安装或已通过 `F5` 启动
+2. 当前窗口是否打开了一个 workspace
+3. 左侧 Activity Bar 是否有 `PM Explorer`
 
 ### 显示 `No documents found`
-
-说明插件没有扫描到可展示内容。
 
 检查：
 
 1. `pmExplorer.rootPaths` 是否正确
-2. 路径是否相对于当前 workspace
-3. 对应目录是否真实存在
-4. 目录是否被 `excludePatterns` 排除了
+2. 这些路径是否真实存在
+3. 路径是否相对于当前 workspace
+4. 是否被 `excludePatterns` 排除了
 
-### 点击文件没有反应
+### 点击 Office 文件没有用系统程序打开
 
 检查：
 
-1. 文件是否真实存在
-2. 系统是否安装了对应文件类型的默认打开程序
-3. 是否有权限访问该文件
+1. 该扩展名是否写入 `pmExplorer.externalOpenExtensions`
+2. 系统是否安装了该类型的默认打开程序
 
 ### 修改配置后没有更新
 
-可以手动执行命令：
+可以执行命令：
 
 ```text
 PM Explorer: Refresh
@@ -314,20 +325,22 @@ PM Explorer: Refresh
 
 如果还是不更新，重新加载窗口再试一次。
 
-## 9. 当前版本说明
+### 右键菜单看不到
 
-当前项目已经具备基础工程结构和最小可运行能力，但仍然属于 MVP 阶段。
+检查：
 
-现阶段重点是：
+1. 你右键的是 `PM Explorer` 视图里的节点，不是 VS Code 自带资源管理器
+2. 当前安装的是不是最新版本插件
+3. 是否已经重新加载窗口或重新安装 `.vsix`
 
-- 验证文档树展示
-- 验证配置是否生效
-- 验证最近更新聚合
-- 验证不同文件类型的打开策略
+## 11. 当前状态
 
-后续可以继续增强：
+当前项目已经具备可编译、可打包、可安装、可实际操作文件的 MVP 版本。
 
-- 更严格的分类映射规则
-- 更灵活的排序策略
-- 自定义分组视图
+后续适合继续增强的方向：
+
+- `Move`
+- `Move to Trash`
+- 更强的分类映射规则
+- 更独立的 `Recent Updates` 排序配置
 - 更丰富的上下文菜单
