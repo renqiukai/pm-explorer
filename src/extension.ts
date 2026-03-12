@@ -10,6 +10,42 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const provider = new DocTreeProvider();
   await provider.initialize();
 
+  const autoRefreshWatcherDisposables: vscode.Disposable[] = [];
+  let refreshDebounceTimer: NodeJS.Timeout | undefined;
+
+  const scheduleRefresh = (): void => {
+    if (refreshDebounceTimer) {
+      clearTimeout(refreshDebounceTimer);
+    }
+
+    refreshDebounceTimer = setTimeout(() => {
+      void provider.refresh();
+      refreshDebounceTimer = undefined;
+    }, 250);
+  };
+
+  const disposeAutoRefreshWatchers = (): void => {
+    while (autoRefreshWatcherDisposables.length > 0) {
+      autoRefreshWatcherDisposables.pop()?.dispose();
+    }
+  };
+
+  const registerAutoRefreshWatchers = (): void => {
+    disposeAutoRefreshWatchers();
+
+    for (const rootPath of getWorkspaceConfig().rootPaths) {
+      const watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(rootPath, "**/*"));
+      autoRefreshWatcherDisposables.push(
+        watcher,
+        watcher.onDidCreate(scheduleRefresh),
+        watcher.onDidDelete(scheduleRefresh),
+        watcher.onDidChange(scheduleRefresh),
+      );
+    }
+  };
+
+  registerAutoRefreshWatchers();
+
   const treeView = vscode.window.createTreeView("pmExplorerView", {
     treeDataProvider: provider,
     showCollapseAll: true,
@@ -187,9 +223,24 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidChangeConfiguration(async (event) => {
       if (event.affectsConfiguration("pmExplorer")) {
+        registerAutoRefreshWatchers();
         await provider.refresh();
       }
     }),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      registerAutoRefreshWatchers();
+      scheduleRefresh();
+    }),
+    {
+      dispose: () => {
+        if (refreshDebounceTimer) {
+          clearTimeout(refreshDebounceTimer);
+          refreshDebounceTimer = undefined;
+        }
+
+        disposeAutoRefreshWatchers();
+      },
+    },
   );
 }
 
