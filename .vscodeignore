@@ -1,0 +1,8 @@
+.git/**
+.github/**
+.vscode/**
+node_modules/**
+src/**
+package-lock.json
+pm-explorer-*.vsix
+USAGE.md

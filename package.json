@@ -1,0 +1,265 @@
+{
+  "name": "pm-explorer",
+  "displayName": "PM Explorer",
+  "description": "A VS Code extension for project document navigation and recent updates.",
+  "version": "0.0.10",
+  "publisher": "local",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:renqiukai/pm-explorer.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:pmExplorerView",
+    "onCommand:pmExplorer.refresh",
+    "onCommand:pmExplorer.openNode",
+    "onCommand:pmExplorer.copyPath",
+    "onCommand:pmExplorer.copyName",
+    "onCommand:pmExplorer.copyRelativePath",
+    "onCommand:pmExplorer.copyMarkdownLink",
+    "onCommand:pmExplorer.renameNode",
+    "onCommand:pmExplorer.duplicateNode",
+    "onCommand:pmExplorer.deleteNode",
+    "onCommand:pmExplorer.newFile",
+    "onCommand:pmExplorer.newFolder",
+    "onCommand:pmExplorer.revealInFinder",
+    "onCommand:pmExplorer.openInTerminal"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pmExplorer",
+          "title": "PM Explorer",
+          "icon": "media/pm-explorer.svg"
+        }
+      ]
+    },
+    "views": {
+      "pmExplorer": [
+        {
+          "id": "pmExplorerView",
+          "name": "Documents"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "pmExplorer.refresh",
+        "title": "PM Explorer: Refresh"
+      },
+      {
+        "command": "pmExplorer.openNode",
+        "title": "PM Explorer: Open Node"
+      },
+      {
+        "command": "pmExplorer.copyPath",
+        "title": "PM Explorer: Copy Path"
+      },
+      {
+        "command": "pmExplorer.copyName",
+        "title": "PM Explorer: Copy Name"
+      },
+      {
+        "command": "pmExplorer.copyRelativePath",
+        "title": "PM Explorer: Copy Relative Path"
+      },
+      {
+        "command": "pmExplorer.copyMarkdownLink",
+        "title": "PM Explorer: Copy Markdown Link"
+      },
+      {
+        "command": "pmExplorer.renameNode",
+        "title": "PM Explorer: Rename"
+      },
+      {
+        "command": "pmExplorer.duplicateNode",
+        "title": "PM Explorer: Duplicate"
+      },
+      {
+        "command": "pmExplorer.deleteNode",
+        "title": "PM Explorer: Delete"
+      },
+      {
+        "command": "pmExplorer.newFile",
+        "title": "PM Explorer: New File"
+      },
+      {
+        "command": "pmExplorer.newFolder",
+        "title": "PM Explorer: New Folder"
+      },
+      {
+        "command": "pmExplorer.revealInFinder",
+        "title": "PM Explorer: Reveal in Finder"
+      },
+      {
+        "command": "pmExplorer.openInTerminal",
+        "title": "PM Explorer: Open in Terminal"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "pmExplorer.refresh",
+          "when": "view == pmExplorerView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pmExplorer.copyPath",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@1"
+        },
+        {
+          "command": "pmExplorer.copyName",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@2"
+        },
+        {
+          "command": "pmExplorer.copyRelativePath",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@3"
+        },
+        {
+          "command": "pmExplorer.copyMarkdownLink",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@4"
+        },
+        {
+          "command": "pmExplorer.renameNode",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@5"
+        },
+        {
+          "command": "pmExplorer.duplicateNode",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@6"
+        },
+        {
+          "command": "pmExplorer.newFile",
+          "when": "view == pmExplorerView && (viewItem == category || viewItem == project)",
+          "group": "navigation@7"
+        },
+        {
+          "command": "pmExplorer.newFolder",
+          "when": "view == pmExplorerView && (viewItem == category || viewItem == project)",
+          "group": "navigation@8"
+        },
+        {
+          "command": "pmExplorer.deleteNode",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@9"
+        },
+        {
+          "command": "pmExplorer.revealInFinder",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@10"
+        },
+        {
+          "command": "pmExplorer.openInTerminal",
+          "when": "view == pmExplorerView && (viewItem == file || viewItem == category || viewItem == project)",
+          "group": "navigation@11"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "PM Explorer",
+      "properties": {
+        "pmExplorer.rootPaths": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "Workspace-relative root folders to scan."
+        },
+        "pmExplorer.categories": {
+          "type": "array",
+          "default": [
+            "Overview",
+            "Plans",
+            "Documents",
+            "Meetings"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Preferred category names to group under each project."
+        },
+        "pmExplorer.recentUpdatesLimit": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "description": "Maximum number of files shown under Recent Updates."
+        },
+        "pmExplorer.excludePatterns": {
+          "type": "array",
+          "default": [
+            ".git",
+            "node_modules"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Folder names to exclude while scanning."
+        },
+        "pmExplorer.externalOpenExtensions": {
+          "type": "array",
+          "default": [
+            ".doc",
+            ".docx",
+            ".ppt",
+            ".pptx",
+            ".xls",
+            ".xlsx"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "File extensions that should open with the system default application."
+        },
+        "pmExplorer.fileSort": {
+          "type": "string",
+          "default": "modifiedTimeDesc",
+          "enum": [
+            "modifiedTimeDesc",
+            "modifiedTimeAsc",
+            "nameAsc",
+            "nameDesc"
+          ],
+          "description": "Sort mode for files inside categories and Recent Updates."
+        },
+        "pmExplorer.newFileNameTemplate": {
+          "type": "string",
+          "default": "note_YYYYMMDD.md",
+          "description": "Default file name template for New File. Supports placeholders like YYYY, MM, DD, HH, mm, ss and YYYYMMDD."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "package:patch": "npm version patch --no-git-tag-version && npx @vscode/vsce package",
+    "package:minor": "npm version minor --no-git-tag-version && npx @vscode/vsce package",
+    "package:major": "npm version major --no-git-tag-version && npx @vscode/vsce package",
+    "install:vsix": "code --install-extension pm-explorer-$(node -p \"require('./package.json').version\").vsix --force",
+    "release:patch": "npm run package:patch && npm run install:vsix",
+    "release:minor": "npm run package:minor && npm run install:vsix",
+    "release:major": "npm run package:major && npm run install:vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.5",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.7.1",
+    "typescript": "^5.6.2"
+  }
+}
