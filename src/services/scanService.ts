@@ -32,8 +32,7 @@ async function buildProjectNode(rootPath: string, config: WorkspaceConfig): Prom
   }
 
   const categoryNodes = await buildCategoryNodes(rootPath, config);
-  const recentNode = await buildRecentUpdatesNode(rootPath, config);
-  const children = sortCategories([...categoryNodes, recentNode], config.categories);
+  const children = sortCategories(categoryNodes, config.categories);
 
   return new FileNode({
     type: "project",
@@ -76,28 +75,6 @@ async function buildCategoryNodes(rootPath: string, config: WorkspaceConfig): Pr
   );
 
   return categoryNodes;
-}
-
-async function buildRecentUpdatesNode(rootPath: string, config: WorkspaceConfig): Promise<FileNode> {
-  const files = await scanFiles(rootPath, config.excludePatterns);
-  const recentFiles = sortFiles(files, config.fileSort).slice(0, config.recentUpdatesLimit);
-
-  return new FileNode({
-    type: "recentRoot",
-    label: "Recent Updates",
-    fullPath: rootPath,
-    collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
-    children: recentFiles.map(
-      (file) =>
-        new FileNode({
-          type: "file",
-          label: file.label,
-          fullPath: file.fullPath,
-          resourceUri: file.resourceUri,
-          description: toRelativePath(rootPath, file.fullPath),
-        }),
-    ),
-  });
 }
 
 async function scanFiles(rootPath: string, excludePatterns: string[]): Promise<ScannedFile[]> {

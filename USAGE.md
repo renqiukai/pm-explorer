@@ -10,7 +10,6 @@
 
 - 按项目根目录展示文档树
 - 按分类目录展示文件
-- 聚合最近更新文件
 - 根据文件类型选择打开方式
 - 使用 workspace 级配置控制行为
 
@@ -80,7 +79,6 @@ pm-explorer-0.0.1.vsix
 {
   "pmExplorer.rootPaths": ["docs"],
   "pmExplorer.categories": ["Overview", "Plans", "Documents", "Meetings"],
-  "pmExplorer.recentUpdatesLimit": 10,
   "pmExplorer.excludePatterns": [".git", "node_modules"],
   "pmExplorer.externalOpenExtensions": [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
   "pmExplorer.fileSort": "modifiedTimeDesc",
@@ -121,21 +119,6 @@ pm-explorer-0.0.1.vsix
 }
 ```
 
-#### `pmExplorer.recentUpdatesLimit`
-
-最近更新文件的显示数量。
-
-- 类型：`number`
-- 默认值：`10`
-
-示例：
-
-```json
-{
-  "pmExplorer.recentUpdatesLimit": 20
-}
-```
-
 #### `pmExplorer.excludePatterns`
 
 扫描时需要忽略的目录名。
@@ -170,7 +153,7 @@ pm-explorer-0.0.1.vsix
 
 #### `pmExplorer.fileSort`
 
-文件节点和 `Recent Updates` 的排序方式。
+文件节点的排序方式。
 
 - 类型：`string`
 - 默认值：`"modifiedTimeDesc"`
@@ -322,7 +305,6 @@ PM Explorer: Refresh
 
 - 验证文档树展示
 - 验证配置是否生效
-- 验证最近更新聚合
 - 验证不同文件类型的打开策略
 
 后续可以继续增强：

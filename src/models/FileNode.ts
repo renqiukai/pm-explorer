@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export type FileNodeType = "project" | "category" | "file" | "recentRoot" | "info";
+export type FileNodeType = "project" | "category" | "file" | "info";
 
 export interface FileNodeParams {
   type: FileNodeType;

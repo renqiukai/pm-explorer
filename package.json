@@ -1,7 +1,7 @@
 {
   "name": "pm-explorer",
   "displayName": "PM Explorer",
-  "description": "A VS Code extension for project document navigation and recent updates.",
+  "description": "A VS Code extension for project document navigation.",
   "version": "0.0.10",
   "publisher": "local",
   "license": "MIT",
@@ -194,12 +194,6 @@
           },
           "description": "Preferred category names to group under each project."
         },
-        "pmExplorer.recentUpdatesLimit": {
-          "type": "number",
-          "default": 10,
-          "minimum": 1,
-          "description": "Maximum number of files shown under Recent Updates."
-        },
         "pmExplorer.excludePatterns": {
           "type": "array",
           "default": [
@@ -235,7 +229,7 @@
             "nameAsc",
             "nameDesc"
           ],
-          "description": "Sort mode for files inside categories and Recent Updates."
+          "description": "Sort mode for files inside categories."
         },
         "pmExplorer.newFileNameTemplate": {
           "type": "string",

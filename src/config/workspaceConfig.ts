@@ -6,7 +6,6 @@ export type FileSortMode = "modifiedTimeDesc" | "modifiedTimeAsc" | "nameAsc" | 
 export interface WorkspaceConfig {
   rootPaths: string[];
   categories: string[];
-  recentUpdatesLimit: number;
   excludePatterns: string[];
   externalOpenExtensions: string[];
   fileSort: FileSortMode;
@@ -27,7 +26,6 @@ export function getWorkspaceConfig(): WorkspaceConfig {
   return {
     rootPaths: rootPaths.map((rootPath) => normalizeWorkspacePath(rootPath)),
     categories: config.get<string[]>("categories", ["Overview", "Plans", "Documents", "Meetings"]),
-    recentUpdatesLimit: config.get<number>("recentUpdatesLimit", 10),
     excludePatterns: config.get<string[]>("excludePatterns", [".git", "node_modules"]),
     externalOpenExtensions: normalizeExtensions(
       config.get<string[]>("externalOpenExtensions", [".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"]),
